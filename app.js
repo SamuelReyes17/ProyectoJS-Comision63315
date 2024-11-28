@@ -53,189 +53,244 @@ PASOS
         2. Prompt confirmación.
         3. Prompt: éxito.
         4. Restar el quantity de cada producto comprado.
-       */
+       
+*/
 
+set_storage()
+const buttonLogin = document.querySelector("#btn_login");
+const buttonSignUp = document.getElementById("btn_signup")
 
-class Producto {
-    constructor(id, nombre, precio, cantidad) {
-        this.id = id;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.cantidad = cantidad;
+buttonLogin.addEventListener("click", login);
+buttonSignUp.addEventListener("click",  signUp);
+
+function set_storage () {
+    if(localStorage.account === undefined) {
+        localStorage.setItem("account", "{}");
     }
 }
 
+ function login () {
+    const email_tag = document.querySelector("#input_email");
+    const password_tag = document.querySelector("#input_password");
 
-alert("Bienvenido a tal Store");
-let opcionMenuPrincipal;
-let arrProductos = setAlmacen();
-let arrCarrito = [];
-let lista = "";
-let carrito = {};
+    const email = email_tag.value;
+    const password = password_tag.value;
+
+    const storage_account = localStorage.account;
+    const storage_account_js = JSON.parse(storage_account);
+
+    if(Object.keys(storage_account_js).find((key) => key === email)) {
+        if (password === storage_account_js[email]) {
+            let tarjetaBienvenida = document.createElement("div");
+            let header = document.getElementById("header")
+            tarjetaBienvenida.className = "tarjeta_bienvenida";
+            tarjetaBienvenida.innerHTML = `
+                 <p>Bienvenido</p>
+            `
+            header.append(tarjetaBienvenida)
+        } else {
+            let tarjetaBienvenida = document.createElement("div");
+            let header = document.getElementById("header")
+            tarjetaBienvenida.className = "tarjeta_bienvenida";
+            tarjetaBienvenida.innerHTML = `
+                 <p>Contrasena incorrecta</p>
+            `
+            header.append(tarjetaBienvenida)
+        }
+    } else {
+        let tarjetaBienvenida = document.createElement("div");
+        let header = document.getElementById("header")
+        tarjetaBienvenida.className = "tarjeta_bienvenida";
+        tarjetaBienvenida.innerHTML = `
+             <p>Cuenta inexistente, crea una cuenta nueva</p>
+        `
+        header.append(tarjetaBienvenida)
+    }
+
+ }
+
+ function signUp () {
+    const email_tag = document.querySelector("#input_email");
+    const password_tag = document.querySelector("#input_password");
+
+    const email = email_tag.value;
+    const password = password_tag.value;
+
+    const storage_account = localStorage.account;
+    const storage_account_js = JSON.parse(storage_account);
+
+    if(storage_account_js[email] === undefined) {
+        storage_account_js[email] = password;
+        localStorage.account = JSON.stringify(storage_account_js);
+        let tarjetaBienvenida = document.createElement("div");
+            let header = document.getElementById("header")
+            tarjetaBienvenida.className = "tarjeta_bienvenida";
+            tarjetaBienvenida.innerHTML = `
+                 <p>Cuenta creada con exito</p>
+            `
+            header.append(tarjetaBienvenida)
+    } else {
+        let tarjetaBienvenida = document.createElement("div");
+            let header = document.getElementById("header")
+            tarjetaBienvenida.className = "tarjeta_bienvenida";
+            tarjetaBienvenida.innerHTML = `
+                 <p>Cuenta ya existente</p>
+            `
+            header.append(tarjetaBienvenida)
+    }
+ }
+
+function principal () {
+
+    let arrProductos = [
+        {id: 1, nombre: "Camisa blanca oversized", precio: 50, stock: 15, categoria: "ropa", rutaImagen: "camisablanca.png"},
+        {id: 2, nombre: "Camisa negra oversized", precio: 50, stock: 7, categoria: "ropa", rutaImagen: "camisanegra.png"},
+        {id: 3, nombre: "Camisa gris oversized", precio: 50, stock: 11, categoria: "ropa", rutaImagen: "camisagris.png"},
+        {id: 4, nombre: "Camisa azul oversized", precio: 50, stock: 3, categoria: "ropa", rutaImagen: "camisaazul.png"},
+        {id: 5, nombre: "Hoodie negro oversized", precio: 90, stock: 9, categoria: "ropa", rutaImagen: "hoodienegro.png"},
+        {id: 6, nombre: "Hoodie blanco oversized", precio: 90, stock: 3, categoria: "ropa", rutaImagen: "hoodiegris.png"},
+        {id: 7, nombre: "Gorra nerga", precio: 50, stock: 15, categoria: "accesorios", rutaImagen: "gorranegra.png"},
+        {id: 8, nombre: "Gorra verde", precio: 50, stock: 15, categoria: "accesorios", rutaImagen: "gorraverde.png"},
+        {id: 9, nombre: "Gafas de sol", precio: 30, stock: 20, categoria: "accesorios", rutaImagen: "gafasdesol.png"},
+        {id: 10, nombre: "Gafas running", precio: 30, stock: 7, categoria: "accesorios", rutaImagen: "gafasrunning.png"},
+        {id: 11, nombre: "Baggy jean", precio: 80, stock: 22, categoria: "ropa", rutaImagen: "baggyjean.png"},
+        {id: 12, nombre: "Baggy cargos", precio: 110, stock: 12, categoria: "ropa", rutaImagen: "cargopant.png"},
+        {id: 13, nombre: "Baggy cargos", precio: 110, stock: 9, categoria: "ropa", rutaImagen: "cargopant2.png"},
+        {id: 14, nombre: "Cargo shorts", precio: 60, stock: 4, categoria: "ropa", rutaImagen: "cargoshorts.png"},
+        {id: 15, nombre: "Running shorts", precio: 70, stock: 15, categoria: "ropa", rutaImagen: "runningshort.png"}
+    
+     ]
+     let carrito = [];
+     crearTarjetasProductos (arrProductos)
+
+     let btnAgregarAlCarrito = document.getElementsByClassName("btnAgregarAlCarrito")
+     for (const boton of btnAgregarAlCarrito) {
+        boton.addEventListener("click", (e) => agregarProductoAlCarrito(e, arrProductos, carrito))
+        
+     }
+
+     let botonCarrito = document.getElementById("productosCarrito")
+     botonCarrito.addEventListener("click", verOcultarCarrito)
+
+     
+    
+}
+
+principal()
 
 
-menuPrincipal: do {
-    opcionMenuPrincipal = Number(prompt("1 - Ver lista de productos\n2 - Anadir producto\n3 - Ver carrito\n4 - Finalizar compra\n5 - Salir"));
+function verOcultarCarrito(e) {
+    let carrito = document.getElementById("carrito");
+    let contenedorProductos = document.getElementById("contenedor")
 
-    switch (opcionMenuPrincipal) {
-        case 1:
-            arrProductos.forEach((producto) => lista += `${producto.id} - ${producto.nombre}\n`);
-            alert(lista);
-            lista = "";
-            continue menuPrincipal;
-        case 2:
 
-            let agregarProducto;
-            let opcionAnadirProducto;
-            do {
-                agregarProducto = Number(prompt("Que producto deseas anadir?"))
-                if (comprobarInput(agregarProducto, arrProductos.length)) {
-                arrCarrito.push(arrProductos[agregarProducto-1]);
-                agregarAlCarrito(agregarProducto)
-                alert(`Has agregado ${arrCarrito[arrCarrito.length-1].nombre}`);
-                opcionAnadirProducto = Number(prompt("1 - Para seguir anadiendo productos\n2 - Para volver al menu principal"))
-                if(comprobarInput(opcionAnadirProducto, 2)) {
-                    if(opcionAnadirProducto === 1) {
-                        continue;
-                    } else {
-                        continue menuPrincipal;
-                    }
-                }
-                continue;
-                } else { 
-                    continue menuPrincipal;
-                }
-            } while (true); 
+    carrito.classList.toggle("oculta")
+    contenedorProductos.classList.toggle("oculta")
+
+}
+
+function crearTarjetasProductos (arrProductos) {
+    let contenedor = document.getElementById("contenedor");
+    arrProductos.forEach(producto => {
+        let mensaje = "Unidades: " + producto.stock;
+
+        if(producto.stock < 5) {
+            mensaje = "Quedan pocas unidades";
+        }
+
+       let tarjetaProducto = document.createElement("div");
+       tarjetaProducto.className = "producto";
+       tarjetaProducto.innerHTML = `
+            <img src="./images/${producto.rutaImagen}"/>
+            <h3>${producto.nombre} </h3>
+            <p>${mensaje}</p>
+            <p>$${producto.precio}</p>
+            <button class="btnAgregarAlCarrito" id=${producto.id}>Agregar al carrito</button>
+       `
+       contenedor.append(tarjetaProducto)
+
+    });
+}
+
+function agregarProductoAlCarrito(e, arrProductos, carrito) {
+    let id = Number(e.target.id)
+    let productoOriginal = arrProductos.find(producto => producto.id === id)
+    let indiceProductoCarrito = carrito.findIndex(producto => producto.id === id)
+    if(indiceProductoCarrito === -1) {
+        carrito.push({
+            id: productoOriginal.id,
+            nombre: productoOriginal.nombre,
+            precio: productoOriginal.precio,
+            unidades: 1,
+            subtotal: productoOriginal.precio
             
-        case 3:
-            let opcionCarrito;
-            let idProductoEliminar;
-
-            do {
-                opcionCarrito = Number(prompt("1 - Ver carrito\n2 - Eliminar producto del carrito\n3 - Volver al menu principal"));
-                if(comprobarInput(opcionCarrito,3)) {
-                    if(opcionCarrito === 1 ){
-                        if(arrCarrito.length === 0) {
-                            alert("No hay productos anadidos");
-                        } else {
-                            arrCarrito.forEach((producto) => lista += `${producto.id} - ${producto.nombre}\n`);
-                            alert(lista);
-                            lista = "";
-                        }
-                        continue;
-                    } else if(opcionCarrito === 2) {
-                        let newArr = [];
-                        idProductoEliminar = Number(prompt("Indique el id del producto a eliminar"));
-                        if(buscarProducto(idProductoEliminar, arrCarrito) !== null){
-
-                            let productoEliminado = buscarProducto(idProductoEliminar, arrCarrito);
-                            if(carrito[productoEliminado.nombre] !== undefined) {
-                                carrito[productoEliminado.nombre]--;
-                                for(const nombre in carrito) {
-                                    let n = carrito[nombre];
-                                    let p;
-                                    for(let i = 0; i < arrCarrito.length; i++) {
-                                        if(arrCarrito[i].nombre === nombre) {
-                                            p = arrCarrito[i];
-                                            break;
-                                        }
-                                    }
-                                    for(let i = 0; i < n; i++) {
-                                        newArr.push(p);
-                                    } 
-                                }
-                                arrCarrito = newArr;
-                                alert(`Producto eliminado ${productoEliminado.nombre}`);
-                                continue menuPrincipal;
-                            } else {
-                                alert("El producto no se ha agregado")
-                                continue menuPrincipal;
-                            }
-                        }
-                    } else if(opcionCarrito === 3) {
-                        continue menuPrincipal;
-                    }
-                }
-                continue menuPrincipal;
-            } while (true);
-           
-        case 4:
-            let opcionConfirmarCompra;
-            if(arrCarrito.length === 0) {
-                alert("No has agregado productos al carrito")
-            } else {
-                alert(`El costo total de sus productos es de:$ ${calcularTotal(arrCarrito)}`)
-                opcionConfirmarCompra = Number(prompt("1 - Para confirmar compra\n2 - Para volver al menu principal"))
-                comprobarInput(opcionConfirmarCompra,2)
-                if(opcionConfirmarCompra === 1) {
-                    alert(`Su compra ha sido confirmada! Valor total: $${calcularTotal(arrCarrito)}`)
-                    arrCarrito = [];
-                }  
-                continue menuPrincipal;
-            }
-            continue menuPrincipal;
-        case 5:
-            alert("Hasta luego!");
-            break;
     
-        default:
-            comprobarInput(opcionMenuPrincipal, 5)
-            continue menuPrincipal;
-    }
-    break;
-} while (true);
-
-
-function setAlmacen () {
-    const nombreProductos =   ["camisa blanca" ,      "zapatos deportivos",   "zapatos lifestyle", "camisa negra", "chaqueta oversized blanca", "camisa oversized gris"];
-    const precioProductos =   [30,                      170,                        140,                30,                     70,                         45          ];
-    const cantidadProductos = [10,                       5,                           7,                10,                     5,                           9          ];
-    
-    const arrInstancias = [];
-
-    for(let i = 0; i < nombreProductos.length; i++) {
-        let t = new Producto(i+1, nombreProductos[i], precioProductos[i], cantidadProductos[i]);
-        arrInstancias.push(t);
-    }
-    
-    return arrInstancias;
-}
-
-function comprobarInput (opc, limite) {
-    let n = Number(opc);
-    if(Number.isNaN(n) ) {
-        alert("Ingrese una opcion valida");
-        return false;
-    } else if(opc <= 0 || opc > limite){
-        alert("Ingrese una opcion valida");
-        return false;
+        })
     } else {
-        return true;
+        if (productoOriginal.stock > carrito[indiceProductoCarrito].unidades) {
+            carrito[indiceProductoCarrito].unidades++
+            carrito[indiceProductoCarrito].subtotal = carrito[indiceProductoCarrito].precio * carrito[indiceProductoCarrito].unidades
+        } else {
+            alert("No hay mas stock disponible")
+        }
+        
     }
+
+    console.log(carrito)
+
+    mostrarProductosEnCarrito(carrito)
 }
 
-function buscarProducto (id, arr) {
-    for(let i = 0; i < arr.length; i++) {
-        if(id === arr[i].id) {
-            return arr[i];
-        } 
-    }
-    return null;
+function mostrarProductosEnCarrito (carrito) {
+    let contenedorCarrito = document.getElementById("carrito");
+    contenedorCarrito.innerHTML = ""
+    carrito.forEach(producto => {
+        let tarjetaCarrito = document.createElement("div");
+        tarjetaCarrito.className = "tarjetaCarrito";
+        tarjetaCarrito.id = producto.id;
+        tarjetaCarrito.innerHTML = `
+        <p>${producto.nombre}</p>
+        <p>$${producto.precio}</p>
+        <p id="unidades_${producto.id}">Unidades: ${producto.unidades}</p>
+        <button id="btnDecrementar">-</button>
+        <p>Total: ${producto.subtotal}</p>
+        <button id="btnBorrar">X</button>
+        `
+
+        contenedorCarrito.append(tarjetaCarrito);
+        let btnDecrementar = document.getElementById("btnDecrementar");
+        let btnBorrar = document.getElementById("btnBorrar")
+
+        btnDecrementar.addEventListener("click", (e) => {
+            let id = e.target.parentNode.id;
+            let nodoUnidades = document.getElementById(`unidades_${producto.id}`)
+            decrementarCarrito(Number(id),carrito,nodoUnidades )
+        })
+
+        btnBorrar.addEventListener("click", (e) => {
+            let id = e.target.parentNode.id;
+            borrarProductoDelCarrito(Number(id),carrito)
+        })
+        
+    })
 }
 
-function calcularTotal (arr) {
-    let total = 0;
-    arr.forEach((producto) => total += producto.precio)
-    return total
-}
-
-function agregarAlCarrito (id) {
-    let nombre = buscarProducto(id, arrProductos).nombre;
-    if(carrito[nombre] !== undefined) {
-        carrito[nombre]++;
+function decrementarCarrito (id, carrito, nodo) {
+    let productoCarrito = carrito.find((producto) => producto.id === id)
+    if(productoCarrito.unidades > 1) {
+        productoCarrito.unidades--;
+        nodo.innerText = `Unidades: ${productoCarrito.unidades}`
     } else {
-        carrito[nombre] = 1;
+        carrito = carrito.filter(producto => producto.id !== id);
+        
     }
+    console.log(carrito)
 }
 
+function borrarProductoDelCarrito (id, carrito) {
+    let productoCarrito = carrito.find((producto) => producto.id === id)
+    carrito = carrito.filter(producto => producto.id !== id);
+
+    console.log(carrito)
+}
 
