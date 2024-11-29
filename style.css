@@ -234,3 +234,20 @@ body {
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
+.totalCarrito {
+    margin-top: 30px;
+    padding: 12px;
+    background-color: #323436;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    border: 2px solid black;
+}
+
+.totalCarrito:hover {
+    transition: 0.3s;
+    background-color: hsl(0, 0%, 100%);
+    color: black;
+}

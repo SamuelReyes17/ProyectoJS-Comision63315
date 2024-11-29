@@ -244,9 +244,22 @@ function agregarProductoAlCarrito(e, arrProductos, carrito) {
     mostrarProductosEnCarrito(carrito)
 }
 
+let carrito = [];
+
 function mostrarProductosEnCarrito (carrito) {
     let contenedorCarrito = document.getElementById("carrito");
     contenedorCarrito.innerHTML = ""
+    let total = 0;
+
+    if (carrito.length === 0) {
+        let emptyMessage = document.createElement("div");
+        emptyMessage.className = "totalCarrito";
+        emptyMessage.innerHTML = `<h3>No hay productos añadidos</h3>`;
+        contenedorCarrito.append(emptyMessage);
+        return;
+    }
+
+
     carrito.forEach(producto => {
         let tarjetaCarrito = document.createElement("div");
         tarjetaCarrito.className = "tarjetaCarrito";
@@ -274,8 +287,15 @@ function mostrarProductosEnCarrito (carrito) {
             let id = e.target.parentNode.id;
             borrarProductoDelCarrito(Number(id),carrito)
         })
-    })
+        total += producto.subtotal;
+    });
+
+    let totalDisplay = document.createElement("div");
+    totalDisplay.className = "totalCarrito";
+    totalDisplay.innerHTML = `<h3>Total a pagar: $${total}</h3>`;
+    contenedorCarrito.append(totalDisplay);
 }
+mostrarProductosEnCarrito(carrito);
 
 function decrementarCarrito (id, carrito, nodo) {
     let productoCarrito = carrito.find((producto) => producto.id === id)
