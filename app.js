@@ -223,8 +223,6 @@ function agregarProductoAlCarrito(e, arrProductos, carrito) {
             precio: productoOriginal.precio,
             unidades: 1,
             subtotal: productoOriginal.precio
-            
-    
         })
     } else {
         if (productoOriginal.stock > carrito[indiceProductoCarrito].unidades) {
@@ -233,7 +231,6 @@ function agregarProductoAlCarrito(e, arrProductos, carrito) {
         } else {
             alert("No hay mas stock disponible")
         }
-        
     }
 
     console.log(carrito)
@@ -254,12 +251,12 @@ function mostrarProductosEnCarrito (carrito) {
         <p id="unidades_${producto.id}">Unidades: ${producto.unidades}</p>
         <button id="decrementar_${producto.id}">-</button>
         <p>Total: ${producto.subtotal}</p>
-        <button id="btnBorrar">X</button>
+        <button id="borrar_${producto.id}">X</button>
         `
 
         contenedorCarrito.append(tarjetaCarrito);
         let btnDecrementar = document.getElementById(`decrementar_${producto.id}`);
-        let btnBorrar = document.getElementById("btnBorrar")
+        let btnBorrar = document.getElementById(`borrar_${producto.id}`);
 
         btnDecrementar.addEventListener("click", (e) => {
             let id = e.target.parentNode.id;
@@ -271,7 +268,6 @@ function mostrarProductosEnCarrito (carrito) {
             let id = e.target.parentNode.id;
             borrarProductoDelCarrito(Number(id),carrito)
         })
-        
     })
 }
 
@@ -279,6 +275,7 @@ function decrementarCarrito (id, carrito, nodo) {
     let productoCarrito = carrito.find((producto) => producto.id === id)
     if(productoCarrito.unidades > 1) {
         productoCarrito.unidades--;
+        productoCarrito.subtotal = productoCarrito.precio * productoCarrito.unidades;
         nodo.innerText = `Unidades: ${productoCarrito.unidades}`
     } else {
         let index = carrito.findIndex(producto => producto.id === id);
@@ -287,13 +284,10 @@ function decrementarCarrito (id, carrito, nodo) {
         }        
     }
     mostrarProductosEnCarrito(carrito);
-    console.log(carrito)
 }
 
 function borrarProductoDelCarrito (id, carrito) {
     let productoCarrito = carrito.find((producto) => producto.id === id)
     carrito = carrito.filter(producto => producto.id !== id);
-
-    console.log(carrito)
+    mostrarProductosEnCarrito(carrito);
 }
-
