@@ -89,6 +89,7 @@ function set_storage () {
             `
             let main = document.querySelector(".main");
             main.style.display = "block";
+            header.style.display = "none";
             header.append(tarjetaBienvenida)
         } else {
             let tarjetaBienvenida = document.createElement("div");
@@ -132,6 +133,7 @@ function set_storage () {
             `
             let main = document.querySelector(".main");
             main.style.display = "block";
+            
             header.append(tarjetaBienvenida)
     } else {
         let tarjetaBienvenida = document.createElement("div");
