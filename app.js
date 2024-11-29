@@ -87,6 +87,8 @@ function set_storage () {
             tarjetaBienvenida.innerHTML = `
                  <p>Bienvenido</p>
             `
+            let main = document.querySelector(".main");
+            main.style.display = "block";
             header.append(tarjetaBienvenida)
         } else {
             let tarjetaBienvenida = document.createElement("div");
@@ -128,6 +130,8 @@ function set_storage () {
             tarjetaBienvenida.innerHTML = `
                  <p>Cuenta creada con exito</p>
             `
+            let main = document.querySelector(".main");
+            main.style.display = "block";
             header.append(tarjetaBienvenida)
     } else {
         let tarjetaBienvenida = document.createElement("div");

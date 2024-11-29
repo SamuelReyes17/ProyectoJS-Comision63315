@@ -23,6 +23,10 @@ body {
     ;
 }
 
+.main {
+    display: none;
+}
+
 .producto {
     width: 30%;
     height: 450px;
