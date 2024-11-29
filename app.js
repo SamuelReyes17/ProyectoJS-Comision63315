@@ -252,13 +252,13 @@ function mostrarProductosEnCarrito (carrito) {
         <p>${producto.nombre}</p>
         <p>$${producto.precio}</p>
         <p id="unidades_${producto.id}">Unidades: ${producto.unidades}</p>
-        <button id="btnDecrementar">-</button>
+        <button id="decrementar_${producto.id}">-</button>
         <p>Total: ${producto.subtotal}</p>
         <button id="btnBorrar">X</button>
         `
 
         contenedorCarrito.append(tarjetaCarrito);
-        let btnDecrementar = document.getElementById("btnDecrementar");
+        let btnDecrementar = document.getElementById(`decrementar_${producto.id}`);
         let btnBorrar = document.getElementById("btnBorrar")
 
         btnDecrementar.addEventListener("click", (e) => {
@@ -281,9 +281,12 @@ function decrementarCarrito (id, carrito, nodo) {
         productoCarrito.unidades--;
         nodo.innerText = `Unidades: ${productoCarrito.unidades}`
     } else {
-        carrito = carrito.filter(producto => producto.id !== id);
-        
+        let index = carrito.findIndex(producto => producto.id === id);
+        if (index !== -1) {
+            carrito.splice(index, 1);
+        }        
     }
+    mostrarProductosEnCarrito(carrito);
     console.log(carrito)
 }
 
