@@ -1,61 +1,4 @@
-/*requerimientos
-* clases, objetos, array, busqueda y filtrado.
-
-Prompt menu
-
-1. lista ---> {id:number, value:number, name:string, quantity:number}
-3. añadir ---> name | id
-4. ver carrito ---> lista ->  productos agregados
-5. eliminar del carrito.
-6. compra ---> restar quantity -1.
-        |
-        *--> confirmación una compra por X valor.
-
-PASOS
-[0] Crear el menu, crear el array del carrito de compras.
-
-
-[1] lista:
-        1. Crear clase de los productos y sus instancias
-                CLASES
-                Producto -----> {}{}{}{}{}{};
-
-        2. Crear un array y meter los productos
-                [{instancia producto 1},{instancia producto 2},{instancia producto 3}...]
-
-[2] añadir:
-        1. Prompt: Qué producto quiere añadir de la lista de productos (id | string).
-        2. Comprobar el input. (números o letras)
-                |
-                *--> Alert: éxito
-                |
-                *--> Alert: No existe.
-        3. Añadimos el producto al carrito
-
-[4] ver carrito:
-        1. Alert: mostrar lista de productos.
-
-[5] eliminar del carrito:
-        1. Revisar que el carrito no esté vacío.
-                |
-                *--> Alert: éxito, preguntarle qué producto hay que eliminar.
-                |
-                *--> Alert: Si el carro está vacío se le avisa al usuario.
-
-        2. Comprobar el input. (números o letras)
-                |
-                *--> Alert: éxito == se borró.
-                |
-                *--> Alert: No existe == avisar al usuario.
-
-[6] Compra:
-        1. Mostrar el total.
-        2. Prompt confirmación.
-        3. Prompt: éxito.
-        4. Restar el quantity de cada producto comprado.
-       
-*/
-
+let currentUser;
 set_storage()
 const buttonLogin = document.querySelector("#btn_login");
 const buttonSignUp = document.getElementById("btn_signup")
@@ -66,6 +9,12 @@ buttonSignUp.addEventListener("click",  signUp);
 function set_storage () {
     if(localStorage.account === undefined) {
         localStorage.setItem("account", "{}");
+    } 
+    if(localStorage.cart === undefined) {
+        localStorage.setItem("cart", "{}")
+    }
+    if(localStorage.history === undefined) {
+        localStorage.setItem("history", "{}")
     }
 }
 
@@ -81,6 +30,7 @@ function set_storage () {
 
     if(Object.keys(storage_account_js).find((key) => key === email)) {
         if (password === storage_account_js[email]) {
+            currentUser = email;
             let tarjetaBienvenida = document.createElement("div");
             let header = document.getElementById("header")
             tarjetaBienvenida.className = "tarjeta_bienvenida";
@@ -166,6 +116,7 @@ function principal () {
         {id: 15, nombre: "Running shorts", precio: 70, stock: 15, categoria: "ropa", rutaImagen: "runningshort.png"}
     
      ]
+     
      let carrito = [];
      crearTarjetasProductos (arrProductos)
 
@@ -178,7 +129,11 @@ function principal () {
      let botonCarrito = document.getElementById("productosCarrito")
      botonCarrito.addEventListener("click", verOcultarCarrito)
 
-     
+    let selectCategorias = document.getElementById("categorias");
+    selectCategorias.addEventListener("change", () => {
+        let categoriaSeleccionada = selectCategorias.value;
+        filtrarPorCategoria(categoriaSeleccionada, arrProductos);
+    });
     
 }
 
@@ -216,12 +171,16 @@ function crearTarjetasProductos (arrProductos) {
        contenedor.append(tarjetaProducto)
 
     });
+
+    
 }
 
 function agregarProductoAlCarrito(e, arrProductos, carrito) {
     let id = Number(e.target.id)
     let productoOriginal = arrProductos.find(producto => producto.id === id)
     let indiceProductoCarrito = carrito.findIndex(producto => producto.id === id)
+    let agregadoExito = false;
+    let tarjetaProducto = e.target.parentNode;
     if(indiceProductoCarrito === -1) {
         carrito.push({
             id: productoOriginal.id,
@@ -230,16 +189,32 @@ function agregarProductoAlCarrito(e, arrProductos, carrito) {
             unidades: 1,
             subtotal: productoOriginal.precio
         })
+        agregadoExito = true
     } else {
         if (productoOriginal.stock > carrito[indiceProductoCarrito].unidades) {
             carrito[indiceProductoCarrito].unidades++
             carrito[indiceProductoCarrito].subtotal = carrito[indiceProductoCarrito].precio * carrito[indiceProductoCarrito].unidades
+            agregadoExito = true
         } else {
-            alert("No hay mas stock disponible")
+            let mensajeError = document.createElement("p");
+            mensajeError.className = "mensajeErrorStock";
+            mensajeError.innerText = "No hay más stock disponible.";
+            mensajeError.style.color = "red";
+            mensajeError.style.fontSize = "12px";
+            tarjetaProducto.append(mensajeError);
         }
     }
+    if(agregadoExito === true) {
+        localStorage_cart = JSON.parse(localStorage.cart);
+        if(localStorage_cart[currentUser] === undefined) {
+            localStorage_cart[currentUser] = carrito;
+        } else {
+            localStorage_cart[currentUser] = carrito;
+        }
+        localStorage.cart = JSON.stringify(localStorage_cart);
+    }
 
-    console.log(carrito)
+
 
     mostrarProductosEnCarrito(carrito)
 }
@@ -268,9 +243,9 @@ function mostrarProductosEnCarrito (carrito) {
         <p>${producto.nombre}</p>
         <p>$${producto.precio}</p>
         <p id="unidades_${producto.id}">Unidades: ${producto.unidades}</p>
-        <button id="decrementar_${producto.id}">-</button>
+        <button id="decrementar_${producto.id}" class="decrement_btn">-</button>
         <p>Total: ${producto.subtotal}</p>
-        <button id="borrar_${producto.id}">X</button>
+        <button id="borrar_${producto.id}" class="delete_btn">X</button>
         `
 
         contenedorCarrito.append(tarjetaCarrito);
@@ -292,8 +267,15 @@ function mostrarProductosEnCarrito (carrito) {
 
     let totalDisplay = document.createElement("div");
     totalDisplay.className = "totalCarrito";
+    totalDisplay.id = "btn_pagar"
     totalDisplay.innerHTML = `<h3>Total a pagar: $${total}</h3>`;
     contenedorCarrito.append(totalDisplay);
+
+    totalDisplay.addEventListener("click", (e)=> {
+        if(e.target.id === "btn_pagar") {
+            pagar(carrito)
+        }
+    })
 }
 mostrarProductosEnCarrito(carrito);
 
@@ -317,3 +299,41 @@ function borrarProductoDelCarrito (id, carrito) {
     carrito = carrito.filter(producto => producto.id !== id);
     mostrarProductosEnCarrito(carrito);
 }
+
+function filtrarPorCategoria(categoriaSeleccionada, arrProductos) {
+    let productosFiltrados = arrProductos.filter(producto =>
+        categoriaSeleccionada === "todos" || producto.categoria === categoriaSeleccionada
+    );
+
+    let contenedor = document.getElementById("contenedor");
+    contenedor.innerHTML = "";
+
+    crearTarjetasProductos(productosFiltrados);
+}
+
+function pagar(arrCarrito) {
+        let contenedorCompra = document.getElementById("contenedorMensajeCompra")
+        let localStorage_history = JSON.parse(localStorage.history);
+        if(localStorage_history[currentUser] === undefined) {
+            localStorage_history[currentUser] = arrCarrito;
+        } else {
+            localStorage_history[currentUser] = arrCarrito;
+        }
+        localStorage.history = JSON.stringify(localStorage_history);
+        let localStorage_cart = JSON.parse(localStorage.cart)
+        localStorage_cart[currentUser] = "";
+        localStorage.cart = JSON.stringify(localStorage_cart);
+
+        contenedorCompra.innerHTML = "";
+        let mensajeCompra = document.createElement("div");
+        mensajeCompra.className = "mensajeCompraExitosa";
+        mensajeCompra.innerHTML = `
+            <h3>¡Compra realizada con éxito!</h3>
+            <p>Gracias por tu compra. Tus productos llegarán pronto.</p>
+        `;
+        contenedorCompra.appendChild(mensajeCompra);
+        arrCarrito = [];
+
+    mostrarProductosEnCarrito(arrCarrito)
+}
+

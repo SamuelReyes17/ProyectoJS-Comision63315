@@ -18,7 +18,7 @@
         <label for="">Email</label>
         <input type="text" id="input_email" />
         <label for="">Password</label>
-        <input type="text" id="input_password" />
+        <input type="password" id="input_password" />
         <button id="btn_login">Iniciar sesion</button>
         <button id="btn_signup">Crear Cuenta</button>
       </div>
@@ -27,9 +27,19 @@
 
     <div class="main">
       <button id="productosCarrito">Carrito</button>
+      <select id="categorias">
+        <option value="todos">Todos</option>
+        <option value="ropa">Ropa</option>
+        <option value="accesorios">Accesorios</option>
+      </select>
       <div id="contenedor"></div>
     </div>
     <div class="oculta" id="carrito"></div>
+    <div id="contenedorMensajeCompra"></div>
+    <div>
+      
+      
+  </div>
     <script src="app.js"></script>
   </body>
 </html>

@@ -13,6 +13,39 @@ body {
     min-height: 100vh;
 }
 
+/*Franja*/
+
+.top-bar {
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    align-items: center;
+    padding: 5px 20px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.top-bar .logo {
+    display: flex;
+    align-items: center;
+}
+.top-bar img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.top-bar span {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/*Main*/
+
 #contenedor{
     padding-top: 5%;
     display: flex;
@@ -108,6 +141,29 @@ body {
     display: none !important;
 }
 
+#categorias {
+    background-color: #fcfcfc; 
+    color: #000000; 
+    border: none;
+    border-radius: 25px; 
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+/*Mensaje Productos*/
+
+.mensajeErrorStock {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
 /*Header*/
 
 .header {
@@ -180,36 +236,8 @@ body {
     margin-top: 25px;
 }
 
-/*Franja*/
 
-.top-bar {
-    background-color: #000;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    text-align: center;
-    align-items: center;
-    padding: 5px 20px;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
 
-.top-bar .logo {
-    display: flex;
-    align-items: center;
-}
-.top-bar img {
-    height: 40px;
-    margin-right: 10px;
-}
-
-.top-bar span {
-    font-size: 20px;
-    font-weight: bold;
-}
 
 /*Carrito*/
 
@@ -250,4 +278,48 @@ body {
     transition: 0.3s;
     background-color: hsl(0, 0%, 100%);
     color: black;
+}
+
+.delete_btn {
+    display: inline-block;
+    background-color: #ff4c4c; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    padding: 8px 10px; 
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.decrement_btn {
+    display: inline-block;
+    background-color: #8a7c7c; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    padding: 8px 10px; 
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+#carrito p {
+    width: 15rem;
+}
+
+.mensajeCompraExitosa {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+    text-align: center;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
 }
