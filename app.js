@@ -335,5 +335,11 @@ function pagar(arrCarrito) {
         arrCarrito = [];
 
     mostrarProductosEnCarrito(arrCarrito)
+
+    setTimeout(() => {
+        if (contenedorCompra.contains(mensajeCompra)) {
+            contenedorCompra.removeChild(mensajeCompra);
+        }
+    }, 4000);
 }
 
