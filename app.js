@@ -1,4 +1,5 @@
 let currentUser;
+let carrito = [];
 set_storage()
 const buttonLogin = document.querySelector("#btn_login");
 const buttonSignUp = document.getElementById("btn_signup")
@@ -33,6 +34,9 @@ function set_storage () {
             currentUser = email;
             let tarjetaBienvenida = document.createElement("div");
             let header = document.getElementById("header")
+            Swal.fire({
+                title: "Bienvenido!",
+                icon: "success"});
             tarjetaBienvenida.className = "tarjeta_bienvenida";
             tarjetaBienvenida.innerHTML = `
                  <p>Bienvenido</p>
@@ -44,6 +48,9 @@ function set_storage () {
         } else {
             let tarjetaBienvenida = document.createElement("div");
             let header = document.getElementById("header")
+            Swal.fire({
+                title: "Contrasena incorrecta",
+                icon: "error"});
             tarjetaBienvenida.className = "tarjeta_bienvenida";
             tarjetaBienvenida.innerHTML = `
                  <p>Contrasena incorrecta</p>
@@ -53,6 +60,9 @@ function set_storage () {
     } else {
         let tarjetaBienvenida = document.createElement("div");
         let header = document.getElementById("header")
+        Swal.fire({
+            title: "Cuenta inexistente, crea una cuenta nueva",
+            icon: "info"});
         tarjetaBienvenida.className = "tarjeta_bienvenida";
         tarjetaBienvenida.innerHTML = `
              <p>Cuenta inexistente, crea una cuenta nueva</p>
@@ -73,6 +83,7 @@ function set_storage () {
     const storage_account_js = JSON.parse(storage_account);
 
     if(storage_account_js[email] === undefined) {
+        currentUser = email;
         storage_account_js[email] = password;
         localStorage.account = JSON.stringify(storage_account_js);
         let tarjetaBienvenida = document.createElement("div");
@@ -96,44 +107,26 @@ function set_storage () {
     }
  }
 
+
 function principal () {
 
-    let arrProductos = [
-        {id: 1, nombre: "Camisa blanca oversized", precio: 50, stock: 15, categoria: "ropa", rutaImagen: "camisablanca.png"},
-        {id: 2, nombre: "Camisa negra oversized", precio: 50, stock: 7, categoria: "ropa", rutaImagen: "camisanegra.png"},
-        {id: 3, nombre: "Camisa gris oversized", precio: 50, stock: 11, categoria: "ropa", rutaImagen: "camisagris.png"},
-        {id: 4, nombre: "Camisa azul oversized", precio: 50, stock: 3, categoria: "ropa", rutaImagen: "camisaazul.png"},
-        {id: 5, nombre: "Hoodie negro oversized", precio: 90, stock: 9, categoria: "ropa", rutaImagen: "hoodienegro.png"},
-        {id: 6, nombre: "Hoodie blanco oversized", precio: 90, stock: 3, categoria: "ropa", rutaImagen: "hoodiegris.png"},
-        {id: 7, nombre: "Gorra nerga", precio: 50, stock: 15, categoria: "accesorios", rutaImagen: "gorranegra.png"},
-        {id: 8, nombre: "Gorra verde", precio: 50, stock: 15, categoria: "accesorios", rutaImagen: "gorraverde.png"},
-        {id: 9, nombre: "Gafas de sol", precio: 30, stock: 20, categoria: "accesorios", rutaImagen: "gafasdesol.png"},
-        {id: 10, nombre: "Gafas running", precio: 30, stock: 7, categoria: "accesorios", rutaImagen: "gafasrunning.png"},
-        {id: 11, nombre: "Baggy jean", precio: 80, stock: 22, categoria: "ropa", rutaImagen: "baggyjean.png"},
-        {id: 12, nombre: "Baggy cargos", precio: 110, stock: 12, categoria: "ropa", rutaImagen: "cargopant.png"},
-        {id: 13, nombre: "Baggy cargos", precio: 110, stock: 9, categoria: "ropa", rutaImagen: "cargopant2.png"},
-        {id: 14, nombre: "Cargo shorts", precio: 60, stock: 4, categoria: "ropa", rutaImagen: "cargoshorts.png"},
-        {id: 15, nombre: "Running shorts", precio: 70, stock: 15, categoria: "ropa", rutaImagen: "runningshort.png"}
+    fetch("./products.json")
+    .then(res => res.json())
+    .then(json => {
+        const arrProductos = json.data
+        let carrito = [];
+        crearTarjetasProductos (arrProductos)
+
+       
+        let selectCategorias = document.getElementById("categorias");
+        selectCategorias.addEventListener("change", () => {
+            let categoriaSeleccionada = selectCategorias.value;
+            filtrarPorCategoria(categoriaSeleccionada, arrProductos);
+            });
+    })
+    .catch(err => console.log("ocurrio un error ", err))
     
-     ]
      
-     let carrito = [];
-     crearTarjetasProductos (arrProductos)
-
-     let btnAgregarAlCarrito = document.getElementsByClassName("btnAgregarAlCarrito")
-     for (const boton of btnAgregarAlCarrito) {
-        boton.addEventListener("click", (e) => agregarProductoAlCarrito(e, arrProductos, carrito))
-        
-     }
-
-     let botonCarrito = document.getElementById("productosCarrito")
-     botonCarrito.addEventListener("click", verOcultarCarrito)
-
-    let selectCategorias = document.getElementById("categorias");
-    selectCategorias.addEventListener("change", () => {
-        let categoriaSeleccionada = selectCategorias.value;
-        filtrarPorCategoria(categoriaSeleccionada, arrProductos);
-    });
     
 }
 
@@ -150,29 +143,47 @@ function verOcultarCarrito(e) {
 
 }
 
+
 function crearTarjetasProductos (arrProductos) {
-    let contenedor = document.getElementById("contenedor");
-    arrProductos.forEach(producto => {
-        let mensaje = "Unidades: " + producto.stock;
+  let contenedor = document.getElementById("contenedor");
+  
+  let agregarProductoAlCarritoWrapper = (e) => agregarProductoAlCarrito(e, arrProductos, carrito);
 
-        if(producto.stock < 5) {
-            mensaje = "Quedan pocas unidades";
-        }
+  arrProductos.forEach(producto => {
+    let mensaje = "Unidades: " + producto.stock;
 
-       let tarjetaProducto = document.createElement("div");
-       tarjetaProducto.className = "producto";
-       tarjetaProducto.innerHTML = `
-            <img src="./images/${producto.rutaImagen}"/>
-            <h3>${producto.nombre} </h3>
-            <p>${mensaje}</p>
-            <p>$${producto.precio}</p>
-            <button class="btnAgregarAlCarrito" id=${producto.id}>Agregar al carrito</button>
-       `
-       contenedor.append(tarjetaProducto)
+    if(producto.stock < 5) {
+      mensaje = "Quedan pocas unidades";
+    }
 
-    });
+  
+    if (contenedor.hasChildNodes()) {
+      let btnAgregarAlCarrito = document.getElementsByClassName("btnAgregarAlCarrito");
+      for (const boton of btnAgregarAlCarrito) {
+        boton.removeEventListener("click", agregarProductoAlCarritoWrapper);
+      }
+    }
 
-    
+    let tarjetaProducto = document.createElement("div");
+    tarjetaProducto.className = "producto";
+    tarjetaProducto.innerHTML = `
+      <img src="./images/${producto.rutaImagen}"/>
+      <h3>${producto.nombre} </h3>
+      <p>${mensaje}</p>
+      <p>$${producto.precio}</p>
+      <button class="btnAgregarAlCarrito" id=${producto.id}>Agregar al carrito</button>
+      `
+    contenedor.append(tarjetaProducto)
+    let btnAgregarAlCarrito = document.getElementsByClassName("btnAgregarAlCarrito")
+
+    for (const boton of btnAgregarAlCarrito) {
+      boton.addEventListener("click", agregarProductoAlCarritoWrapper)
+    }
+
+    let botonCarrito = document.getElementById("productosCarrito")
+    botonCarrito.addEventListener("click", verOcultarCarrito)
+
+  });
 }
 
 function agregarProductoAlCarrito(e, arrProductos, carrito) {
@@ -205,7 +216,7 @@ function agregarProductoAlCarrito(e, arrProductos, carrito) {
         }
     }
     if(agregadoExito === true) {
-        localStorage_cart = JSON.parse(localStorage.cart);
+        const localStorage_cart = JSON.parse(localStorage.cart);
         if(localStorage_cart[currentUser] === undefined) {
             localStorage_cart[currentUser] = carrito;
         } else {
@@ -217,9 +228,15 @@ function agregarProductoAlCarrito(e, arrProductos, carrito) {
 
 
     mostrarProductosEnCarrito(carrito)
+    Swal.fire({
+        title: "Producto agregado",
+        text: `Se agrego ${productoOriginal.nombre} al carrito`,
+        icon: "success",
+        confirmButtonText: "Aceptar"
+    });
 }
 
-let carrito = [];
+
 
 function mostrarProductosEnCarrito (carrito) {
     let contenedorCarrito = document.getElementById("carrito");
@@ -342,4 +359,3 @@ function pagar(arrCarrito) {
         }
     }, 4000);
 }
-
